@@ -1,43 +1,50 @@
-/************************************************************************************************************/
-/*This function makes use of Jbantes library functions (https://github..com/Jbante/Filemaker-Techniques)	*/
-/*Purpose is to log information into a log-variable automatically											*/
-/*Last update: 2017-07-25																					*/
-/*Created By: Petter Derhaag																				*/
-/************************************************************************************************************/
-
 Let([
-~time	=	Get ( CurrentTimeUTCMilliseconds ) 
+~time	=	Get ( CurrentTimeUTCMilliseconds )
 ;~logdatacheck	=	PatternCount(LeftWords ( ~logdata ; 1) ; ":")
 ];
 
-Case(~logdata = 0 ; Let($$LOGDATA = "" ; "") ; //Set $$LOGDATA to null
+Case(~logdata = 0 ; Let($$LOGDATA = "" ; "") ; 
 
 #("logdata" ; 
-	#Get($$LOGDATA ; "logdata") //Obtain previous entries
+	#Get($$LOGDATA ; "logdata") 
 	& 
 				#(~time ; 	Case(
 							~logdatacheck = 0 ; //test to see whether the logdata was already timed
-							#("date_time" ; 
-								Get(CurrentDate) & "-" & Get(CurrentTime)) & ~logdata;  //result if it was not timed already
-							~logdata  //result if the logdata is already timed on its own. 
-							) //end case
+							#("date_time" ; Get(CurrentDate) & "-" & Get(CurrentTime)) & ~logdata;  //result if it was not timed already
+							~logdata) //result if the logdata is already timed on its own. 
 					)//end time
 					)//end logdata
-						
-	& #("elements" ; List(
-							#Get($$LOGDATA ; "elements")
-							; ~time
-							)//end list
-		)	//end case
-	&#("meta" ;  
-		#("script" ; Get(ScriptName)) & 
-		#("account" ; Get(AccountName)) & 
-		#("system" ; 
-			#("platform" ;  Get(SystemPlatform)) & 
-			#("version" ; Get(SystemVersion)) &
-			#("device" ; Get(Device))
-			) & // end system 
-		#("file" ; Get(FileName))
+			//end case
+	& # ( "elements" ; List(#Get($$LOGDATA ; "elements"); ~time))
+	& # ( "meta" ;  
+		#("script" ; Get(ScriptName))
+		& # ( "account" ; Get(AccountName)) 
+		& # ("platform" ;  Get(SystemPlatform))
+		& # ("version" ; Get(SystemVersion)) 
+		& # ("device" ; Get(Device))
+		& # ( "AllowAbortState" ; Get ( AllowAbortState ) )
+		& # ( "ErrorCaptureState" ; Get ( ErrorCaptureState ) )
+		& # ( "FilePath" ; Get ( FilePath ) )
+		& # ( "LayoutAccess" ; Get ( LayoutAccess ) )
+		& # ( "LayoutName" ; Get ( LayoutName ) )
+		& # ( "LayoutTableName" ; Get ( LayoutTableName ) )
+		& # ( "LayoutViewState" ; Get ( LayoutViewState ) )
+		& # ( "MultiUserState" ; Get ( MultiUserState ) )
+		& # ( "RecordAccess" ; Get ( RecordAccess ) )
+		& # ( "RecordID" ; Get ( RecordID ) )
+		& # ( "RecordOpenCount" ; Get ( RecordOpenCount ) )
+		& # ( "RecordOpenState" ; Get ( RecordOpenState ) )
+		& # ( "SortState" ; Get ( SortState ) )
+		& # ( "StatusAreaState" ; Get ( StatusAreaState ) )
+		& # ( "SystemVersion" ; Get ( SystemVersion ) )
+		& # ( "UserCount" ; Get ( UserCount ) )
+		& # ( "UserName" ; Get ( UserName ) )
+		& # ( "WindowMode" ; Get ( WindowMode ) )
+		& # ( "WindowStyle" ; Get ( WindowStyle ) )
+		& # ( "WindowVisible" ; Get ( WindowVisible ) )
+		& If (not IsEmpty( Get ( ActiveFieldName ) );
+				#("ActiveFieldName" ;Get(ActiveFieldName))	) 
+		& # ( "file" ; Get(FileName))
 )//end meta
 )//end case 
 )//end Let
