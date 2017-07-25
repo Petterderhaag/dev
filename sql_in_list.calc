@@ -2,6 +2,7 @@
 /*Purpose: 	Substitute list of elements to comma separated				*/
 /*			list <('element1','element2',...,'elementN')>				*/
 /*			For use in SQL 'IN' queries									*/
+/*			Created: 2017-07-25											*/
 /************************************************************************/
 
 
