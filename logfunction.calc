@@ -6,23 +6,29 @@
 /************************************************************************************************************/
 
 Let([
-~time	=	Get ( CurrentTimeUTCMilliseconds )
+~time	=	Get ( CurrentTimeUTCMilliseconds ) 
 ;~logdatacheck	=	PatternCount(LeftWords ( ~logdata ; 1) ; ":")
 ];
 
-Case(~logdata = 0 ; Let($$LOGDATA = "" ; "") ; 
+Case(~logdata = 0 ; Let($$LOGDATA = "" ; "") ; //Set $$LOGDATA to null
 
 #("logdata" ; 
-	#Get($$LOGDATA ; "logdata") 
+	#Get($$LOGDATA ; "logdata") //Obtain previous entries
 	& 
 				#(~time ; 	Case(
 							~logdatacheck = 0 ; //test to see whether the logdata was already timed
-							#("date_time" ; Get(CurrentDate) & "-" & Get(CurrentTime)) & ~logdata;  //result if it was not timed already
-							~logdata) //result if the logdata is already timed on its own. 
+							#("date_time" ; 
+								Get(CurrentDate) & "-" & Get(CurrentTime)) & ~logdata;  //result if it was not timed already
+							~logdata  //result if the logdata is already timed on its own. 
+							) //end case
 					)//end time
 					)//end logdata
-			//end case
-	& #("elements" ; List(#Get($$LOGDATA ; "elements"); ~time))
+						
+	& #("elements" ; List(
+							#Get($$LOGDATA ; "elements")
+							; ~time
+							)//end list
+		)	//end case
 	&#("meta" ;  
 		#("script" ; Get(ScriptName)) & 
 		#("account" ; Get(AccountName)) & 
