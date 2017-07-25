@@ -1,0 +1,30 @@
+Let([
+~time	=	Get ( CurrentTimeUTCMilliseconds )
+;~logdatacheck	=	PatternCount(LeftWords ( ~logdata ; 1) ; ":")
+];
+
+Case(~logdata = 0 ; Let($$LOGDATA = "" ; "") ; 
+
+#("logdata" ; 
+	#Get($$LOGDATA ; "logdata") 
+	& 
+				#(~time ; 	Case(
+							~logdatacheck = 0 ; //test to see whether the logdata was already timed
+							#("date_time" ; Get(CurrentDate) & "-" & Get(CurrentTime)) & ~logdata;  //result if it was not timed already
+							~logdata) //result if the logdata is already timed on its own. 
+					)//end time
+					)//end logdata
+			//end case
+	& #("elements" ; List(#Get($$LOGDATA ; "elements"); ~time))
+	&#("meta" ;  
+		#("script" ; Get(ScriptName)) & 
+		#("account" ; Get(AccountName)) & 
+		#("system" ; 
+			#("platform" ;  Get(SystemPlatform)) & 
+			#("version" ; Get(SystemVersion)) &
+			#("device" ; Get(Device))
+			) & // end system 
+		#("file" ; Get(FileName))
+)//end meta
+)//end case 
+)//end Let
